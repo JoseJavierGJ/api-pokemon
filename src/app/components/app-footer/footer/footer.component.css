@@ -1,0 +1,26 @@
+.footer-content {
+  width: 100%;
+  padding: 20px 0;
+  color: #333; /* Color de texto */
+  text-align: center; /* Alineación del texto */
+  font-family: 'Arial', sans-serif; /* Tipo de fuente */
+}
+
+.footer-content p {
+  margin: 5px 0; 
+  font-size: 16px; 
+}
+
+.footer-content .social-icons {
+  margin-top: 10px;
+}
+
+.footer-content .social-icon {
+  margin: 0 10px;
+  display: inline-block;
+}
+
+.footer-content a {
+  color: #333; 
+  text-decoration: none; 
+}

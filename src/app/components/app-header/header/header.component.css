@@ -1,0 +1,56 @@
+.header-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 0 20px;
+  width: 100%;
+  background-color: #a2caa5;
+}
+.header-title {
+  font-size: 24px;
+  color: rgb(0, 0, 0);
+  font-family: 'Arial', sans-serif;
+}
+
+.button {
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  background-color: #1070dd;
+  color: black;
+  border-radius: 20px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.logout-container button img {
+  margin-right: 8px; 
+}
+
+.button:hover {
+  background-color: #3e8be3;
+  color: white;
+}
+
+.titulo {
+  color: yellow;
+  text-shadow: -2px 0 blue, 0 2px blue, 2px 0 blue, 0 -2px blue;
+}
+
+.title-image {
+  height: 40px;
+  width: 40px;
+  margin-left: 10px; 
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-container button img {
+  vertical-align: middle;
+}

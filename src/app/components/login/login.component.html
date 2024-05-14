@@ -1,0 +1,47 @@
+
+ <img class="fondo" src="./assets/images/fondo.png" alt="Fondo decorativo"/>
+ <div *ngIf="!isLoggedIn" class="login-container">
+   <div class="welcome-message">Bienvenido, entrenador
+    <img src="assets/images/ditto.png" alt="Ditto" style="height: 40px; width: 40px; vertical-align: middle;"/>
+   </div>
+
+
+
+
+   <form (ngSubmit)="login()" #loginForm="ngForm" class="login-form">
+     <h2>
+      Iniciar Sesión
+      <img src="assets/images/entrenador.png" alt="" style="height: 36px; width: 36px; vertical-align: middle;"/>
+    </h2>
+ 
+     <mat-form-field class="example-form-field">
+       <mat-label>Entrenador</mat-label>
+       <input matInput type="text" [(ngModel)]="username" name="username" required>
+       <button matSuffix mat-icon-button aria-label="Clear" *ngIf="username" (click)="username=''">
+         <mat-icon>close</mat-icon>
+       </button>
+     </mat-form-field>
+ 
+     <mat-form-field class="example-form-field">
+       <mat-label>Contraseña</mat-label>
+       <input matInput [type]="hide ? 'password' : 'text'" [(ngModel)]="password" name="password" required>
+       <button matSuffix mat-icon-button aria-label="Clear" *ngIf="password" (click)="password=''">
+         <mat-icon>close</mat-icon>
+       </button>
+     </mat-form-field>
+ 
+     <mat-checkbox class="verContrasena" (change)="togglePasswordVisibility()" aria-label="Mostrar contraseña">
+      Mostrar Contraseña
+    </mat-checkbox>
+    
+
+    <button type="submit" class="button">Entrar al Mundo Pokémon
+      <img src="assets/images/mapa.png" alt="Mapa" style="height: 31px; width: 31px;">
+    </button>
+
+   </form>
+ </div>
+ <div *ngIf="isLoggedIn" class="login-success">
+ </div>
+ 
+ 
