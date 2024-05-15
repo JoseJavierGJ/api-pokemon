@@ -10,7 +10,12 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { ObservablesService } from '../../../services/observables.service';
 import { LoaderComponent } from '../../loader/loader.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DeleteDialogComponent } from '../../delete-dialog/delete-dialog.component';
+import { FormsModule } from '@angular/forms';
 // import { MatSort, MatSortModule } from '@angular/material/sort'; //
+import { ChangeDetectorRef } from '@angular/core';
+
 
 
 export interface Pokemon {
@@ -27,7 +32,7 @@ export interface Pokemon {
   styleUrl: './inicio.component.css',
   imports: [RouterLink, MatButtonModule, MatIconModule, CommonModule, 
     MatTableModule, MatInputModule, MatSelectModule, MatFormFieldModule, 
-    LoaderComponent],
+    LoaderComponent, FormsModule],
 })
 
 
@@ -39,10 +44,17 @@ export class InicioComponent implements OnInit{
   availablePokemons: Pokemon[] = [];
   selectedPokemon: Pokemon | null = null; 
   loader:boolean = false;
+  pokemonToDelete: Pokemon | null = null;
+  showConfirmationDialog: boolean = false;
+  newPokemonName: string = '';
+  newPokemonUrl: string = '';
 
 
   constructor(private obtenerDatosService: ObtenerDatosService, 
-    private observablesService: ObservablesService) { }
+    private observablesService: ObservablesService,
+    public dialog: MatDialog,
+    private cdr: ChangeDetectorRef ) { }
+
 
   ngOnInit(): void {
     this.loadAllPokemons();
@@ -52,6 +64,7 @@ export class InicioComponent implements OnInit{
     });
   }
 
+
   getPokemon(): void {
     this.obtenerDatosService.getPokemon('https://pokeapi.co/api/v2/pokemon?limit=9&offset=0').subscribe(
       (response: any) => {
@@ -59,25 +72,24 @@ export class InicioComponent implements OnInit{
         console.log("Response from API:", response);
         if (response.results) {
           this.dataSource = response.results.map((pokemon: any) => {
-            // Extraer el ID del Pokémon de la URL
+            // Extraer el ID del pokemon de la URL
             const urlParts = pokemon.url.split('/');
             const pokemonId = parseInt(urlParts[urlParts.length - 2]); 
             return {
               position: pokemonId,
               name: pokemon.name,
-              imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`,
+              // Imagen gif
+              imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemonId}.gif`,
+              // Imagen png
+              // imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`,
               url: pokemon.url
             };
           });
-        } else {
-          console.error("Unexpected API response structure:", response);
         }
       },
-      error => {
-        console.error("Error fetching Pokémon:", error);
-      }
     );
   }
+  
 
   loadAllPokemons(): void {
     this.obtenerDatosService.getPokemon('https://pokeapi.co/api/v2/pokemon?limit=151').subscribe(
@@ -85,46 +97,108 @@ export class InicioComponent implements OnInit{
         this.allPokemons = response.results.map((pokemon: any, index: number) => ({
           position: index + 1,
           name: pokemon.name,
-          url: pokemon.url, // Asegúrate de que esta línea está asignando la URL correctamente
-          imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${parseInt(pokemon.url.split('/')[6])}.png`
+          url: pokemon.url, 
+          // Imagen gif
+          imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${parseInt(pokemon.url.split('/')[6])}.gif`
+          // Imagen png
+          // imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${parseInt(pokemon.url.split('/')[6])}.png`
         }));
-        console.log(this.allPokemons); // Agrega esto para verificar las URLs
+        console.log(this.allPokemons); 
         this.updateAvailablePokemons();
       }
     );
   }
 
+
   updateAvailablePokemons(): void {
     this.availablePokemons = this.allPokemons.filter(ap => !this.dataSource.some(dp => dp.name === ap.name));
     this.availablePokemons.forEach(pokemon => {
       const urlParts = pokemon.url.split('/');
-      const pokemonId = parseInt(urlParts[urlParts.length - 2]);
-      pokemon.imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
+      // const pokemonId = parseInt(urlParts[urlParts.length - 2]);
+      pokemon.imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${parseInt(pokemon.url.split('/')[6])}.gif`;
     });
   }
+
   
   addPokemon(): void {
     if (this.selectedPokemon) {
-      // Verificar si el Pokémon ya está en la tabla
+      // Verificar si el pokemon ya está en la tabla
       const pokemonExists = this.dataSource.some(pokemon => pokemon.name === this.selectedPokemon!.name);
       
       if (pokemonExists) {
-        // Si el Pokemon ya está en la tabla mostrar una alerta
+        // Si el pokemon ya está en la tabla mostrar una alerta
         alert("¡Este Pokémon ya está en la tabla!");
       } else {
-        // Si el Pokemon no está en la tabla, agregarlo
+        // Si el Pokemon no está en la tabla lo agrega
         this.dataSource = [...this.dataSource, this.selectedPokemon];
-        this.selectedPokemon = null; // Reseteamos después de añadir
+        this.selectedPokemon = null; // Reseteamos despues de añadir
         this.updateAvailablePokemons();
       }
     }
   }
 
+
   removeData(pokemonToRemove: Pokemon): void {
-    this.dataSource = this.dataSource.filter(pokemon => pokemon !== pokemonToRemove);
+    const dialogRef = this.dialog.open(
+      DeleteDialogComponent,
+      {
+        data: { fileName: pokemonToRemove.name },
+        disableClose: true
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.dataSource = this.dataSource.filter(
+          (pokemon) => pokemon !== pokemonToRemove
+        );
+      }
+    });
+  }
+
+
+  addNewPokemon(): void {
+
+    if (this.newPokemonName.trim() === '' || this.newPokemonUrl.trim() === '') {
+      alert('Por favor, completa todos los campos para agregar un nuevo Pokémon.');
+      return;
+    }
+    
+    const newPosition = this.dataSource.length + 1;
+    // arreglo imagenes 
+    const availableImages = [
+      // 'assets/images/img/missingno.png',
+      'assets/images/img/parrot.png',
+      // 'assets/images/img/cat0.png',
+      'assets/images/img/cat1.png',
+      // 'assets/images/img/cat2.png',
+      'assets/images/img/cat3.png',
+      // 'assets/images/img/cat4.png',
+      'assets/images/img/cat5.png',
+      'assets/images/img/cat6.gif',
+      'assets/images/img/cat7.gif',
+      'assets/images/img/cat8.gif'
+    ];
+  
+    // selecciona una imagen aleatoria
+    const randomIndex = Math.floor(Math.random() * availableImages.length);
+    const randomImage = availableImages[randomIndex];
+  
+    // nuevo pokemon con imagen aleatoria
+    const newPokemon: Pokemon = {
+      name: this.newPokemonName,
+      position: newPosition,
+      imageUrl: randomImage, 
+      url: this.newPokemonUrl
+    };
+  
+    // agrega el nuevo pkemon al dataSource y actualiza la vista
+    this.dataSource = [...this.dataSource, newPokemon];
+    this.newPokemonName = '';
+    this.newPokemonUrl = '';
+    this.updateAvailablePokemons();
+    this.cdr.detectChanges();
   }
 }
-
-
 
 

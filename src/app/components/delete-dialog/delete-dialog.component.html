@@ -1,0 +1,8 @@
+<h2 mat-dialog-title class="dialog-title">Eliminar Pokémon</h2>
+<mat-dialog-content class="dialog-content">
+  ¿Quieres eliminar a {{ data.fileName }}?
+</mat-dialog-content>
+<mat-dialog-actions class="dialog-actions">
+  <button mat-flat-button color="primary" mat-dialog-close class="cancel-button">No</button>
+  <button mat-flat-button color="warn" [mat-dialog-close]="true" cdkFocusInitial class="delete-button">Eliminar</button>
+</mat-dialog-actions>

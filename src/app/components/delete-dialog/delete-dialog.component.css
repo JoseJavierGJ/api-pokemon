@@ -1,0 +1,24 @@
+.dialog-title {
+  text-align: center; 
+  color: yellow;
+  text-shadow: -2px 0 blue, 0 2px blue, 2px 0 blue, 0 -2px blue;
+}
+
+.dialog-content {
+  margin-bottom: 20px; 
+  text-align: center; 
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-between; 
+  padding: 10px; 
+}
+
+.cancel-button {
+  margin-right: auto; 
+}
+
+.delete-button {
+  margin-left: auto; 
+}

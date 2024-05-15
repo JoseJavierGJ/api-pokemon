@@ -63,9 +63,30 @@
       </ng-container>
         
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <!-- <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackById"></tr>
+
     </table>
-    
   </div>
+
+
+
+  <div class="input-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Nombre del Pokémon</mat-label>
+      <input matInput [(ngModel)]="newPokemonName">
+    </mat-form-field>
+    
+    <mat-form-field appearance="fill">
+      <mat-label>URL del Pokémon</mat-label>
+      <input matInput [(ngModel)]="newPokemonUrl">
+    </mat-form-field>
+    
+    <button mat-raised-button color="primary" (click)="addNewPokemon()" class="add-button">
+      Agregar Pokémon
+      <img src="assets/images/poke.png" alt="Mapa" style="height: 31px; width: 31px; vertical-align: middle;">
+    </button>
+  </div>
+  
 </div>
 
